@@ -124,6 +124,7 @@ public class CustomView extends View {
             }
             path.close();
             canvas.drawPath(path,paint);
+            //可怕，早知道就听数学老师的话学极坐标了，→_→不过幸好知道怎么搞
 
         }
 
