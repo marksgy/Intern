@@ -125,7 +125,7 @@ public class CustomView extends View {
                 canvas.rotate(radius);
 
 
-            }
+            }//需要改改
 
 
         }
