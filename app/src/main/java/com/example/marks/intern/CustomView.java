@@ -17,8 +17,8 @@ public class CustomView extends View {
 
     private int polygon=4;
     private int a,r,g,b;
-    private float x_start,x_end,y;
-    private float radius = 360/polygon;
+    private float x_start,x_end,y_start,y_end;
+    private float arc = 360/polygon;
 
 
 
@@ -63,7 +63,7 @@ public class CustomView extends View {
 
     public void setPolygon(int polygon){
         this.polygon=polygon;
-        this.radius=360/polygon;
+        this.arc=360/polygon;
         requestLayout();
         invalidate();
 
@@ -105,28 +105,25 @@ public class CustomView extends View {
 
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        float length= (float) (getWidth()/polygon);
+        float radius= (float) ((getWidth()/Math.PI)/2);
         if (!isInEditMode()){
             canvas.translate(getWidth()/2,getHeight()/2);
             Paint paint=new Paint();
             Path path = new Path();
             paint.setARGB(a,r,g,b);
             paint.setStyle(Paint.Style.FILL);
-            x_start=-length/2;
-            x_end=length/2;
-            y= (float) ((length/2)/Math.tan(radius/2*Math.PI/180));
 
+
+            x_start=radius;
+            y_start=0;
+            path.moveTo(x_start,y_start);
             for (int i=1;i<=polygon;i++){
-
-                path.lineTo(x_start, y);
-                path.lineTo(x_end,y);
-                path.close();
-                canvas.drawPath(path,paint);
-                canvas.rotate(radius);
-
-
-            }//需要改改
-
+                x_end = (float) (radius * Math.cos(i * arc * Math.PI / 180));
+                y_end = (float) (radius*Math.sin(i * arc * Math.PI / 180));
+                path.lineTo(x_end,y_end);
+            }
+            path.close();
+            canvas.drawPath(path,paint);
 
         }
 
