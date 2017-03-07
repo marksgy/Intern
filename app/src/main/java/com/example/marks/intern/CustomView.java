@@ -125,8 +125,12 @@ public class CustomView extends View {
         if (!isInEditMode()) {
             canvas.translate(getWidth() / 2, getHeight() / 2);
 
+            if (getHeight()>=getWidth()){
+                radius = (float) (getWidth()/2) ;
+            }else {
+                radius = (float) (getHeight()/2 ) ;
+            }
 
-            radius = (float) ((getWidth() / Math.PI) / 2);
             Path path = new Path();
             paint.setARGB(a, r, g, b);
             paint.setStyle(Paint.Style.FILL);
