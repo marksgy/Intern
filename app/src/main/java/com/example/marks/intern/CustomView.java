@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
@@ -143,13 +144,19 @@ public class CustomView extends View {
             canvas.clipPath(path);
             canvas.drawPath(path, paint);
             if (bitmap!=null){
-//                int width=bitmap.getWidth();
-//                int height=bitmap.getHeight();
-//                Matrix matrix = new Matrix();
-//                matrix.postScale(radius*2/width,radius*2/height);
-//                Bitmap dstbmp = Bitmap.createBitmap(bitmap,(-getWidth()/2),(-getHeight()/2) , bitmap.getWidth(), bitmap.getHeight(),
-//                        matrix, true);
-                canvas.drawBitmap(bitmap,(-getWidth()/2),(-getHeight()/2),paint);
+                int width=bitmap.getWidth();
+                int height=bitmap.getHeight();
+                Matrix matrix = new Matrix();
+                float scale;
+                if (width>=height){
+                    scale=radius*2/height;
+                }else {
+                    scale=radius*2/width;
+                }
+                matrix.setScale(scale,scale);
+                Bitmap dstbmp = Bitmap.createBitmap(bitmap,0,0 , width, height,
+                        matrix, true);
+                canvas.drawBitmap(dstbmp,-radius,-radius,paint);
 
 
             }
