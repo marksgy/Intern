@@ -7,8 +7,9 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.RectF;
+import android.graphics.PointF;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 
 /**
@@ -21,12 +22,28 @@ public class CustomView extends View {
     private int polygon = 4;
     private int a, r, g, b;
     private float x_start, x_end, y_start, y_end;
+    float x_down=0;
+    float y_down=0;
+    float oldDist,newDist;
     private float arc = 360 / polygon;
     private float radius ;
+
     private Bitmap bitmap;
-    private RectF dstRect, srcRect;
+    Matrix matrix = new Matrix();
+    Matrix matrix1= new Matrix();
+    Matrix savedMatrix=new Matrix();
+    PointF start = new PointF();
+    PointF mid = new PointF();
+    private static final int NONE = 0;
+    private static final int DRAG = 1;
+    private static final int ZOOM = 2;
+    int mode=NONE;
+
+    boolean matrixCheck=false;
+
+
     Paint paint = new Paint();
-    Paint paint2=new Paint();
+
 
 
     public CustomView(Context context) {
@@ -118,6 +135,52 @@ public class CustomView extends View {
 
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return super.onTouchEvent(event);
+        switch (event.getAction() & MotionEvent.ACTION_MASK) {
+            case MotionEvent.ACTION_DOWN:
+                mode = DRAG;
+                x_down=event.getX();
+                y_down=event.getY();
+                savedMatrix.set(matrix);
+                break;
+            case MotionEvent.ACTION_POINTER_DOWN:
+                mode = ZOOM;
+                oldDist = spacing(event);
+
+                savedMatrix.set(matrix);
+                midPoint(mid, event);
+                break;
+            case MotionEvent.ACTION_MOVE:
+                if (mode == ZOOM) {
+                    matrix1.set(savedMatrix);
+                    float scale = newDist / oldDist;
+                    matrix1.postScale(scale, scale, mid.x, mid.y);// 縮放
+
+                    if (matrixCheck == false) {
+                        matrix.set(matrix1);
+                        invalidate();
+                    }
+                } else if (mode == DRAG) {
+                    matrix1.set(savedMatrix);
+                    matrix1.postTranslate(event.getX() - x_down, event.getY()
+                            - y_down);// 平移
+
+                    if (matrixCheck == false) {
+                        matrix.set(matrix1);
+                        invalidate();
+                    }
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_POINTER_UP:
+                mode = NONE;
+                break;
+        }
+        return true;
+    }
+
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
@@ -150,7 +213,7 @@ public class CustomView extends View {
             if (bitmap!=null){
                 int width=bitmap.getWidth();
                 int height=bitmap.getHeight();
-                Matrix matrix = new Matrix();
+
                 float scale;
                 if (width>=height){
                     scale=radius*2/height;
@@ -169,5 +232,18 @@ public class CustomView extends View {
         }
 
 
+    }
+    // 触碰两点间距离
+    private float spacing(MotionEvent event) {
+        float x = event.getX(0) - event.getX(1);
+        float y = event.getY(0) - event.getY(1);
+        return (float) Math.sqrt(x * x + y * y);
+    }
+
+    // 取手势中心点
+    private void midPoint(PointF point, MotionEvent event) {
+        float x = event.getX(0) + event.getX(1);
+        float y = event.getY(0) + event.getY(1);
+        point.set(x / 2, y / 2);
     }
 }
