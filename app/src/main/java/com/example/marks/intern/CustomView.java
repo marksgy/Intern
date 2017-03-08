@@ -184,7 +184,7 @@ public class CustomView extends View implements View.OnTouchListener {
                 if (count==0){
                     matrix.reset();
                     matrix.setScale(scale1,scale1);
-                    matrix.postTranslate(-scale1*width/2,-scale1*height/2);
+                    matrix.postTranslate(-radius,-radius);
                 }
 
 
@@ -195,7 +195,7 @@ public class CustomView extends View implements View.OnTouchListener {
 
 
         }
-        count++;
+        count=1;
 
     }
     // 触碰两点间距离
@@ -234,7 +234,7 @@ public class CustomView extends View implements View.OnTouchListener {
 
                     float newDist = spacing(event);
                     scale2 = newDist / oldDist;
-                    matrix1.postScale(scale2, scale2, mid.x, mid.y);// 縮放
+                    matrix1.postScale(scale2, scale2,mid.x-(getWidth()/2)   , mid.y-(getHeight()/2));// 縮放
 
 
                     if (matrixCheck == false) {
