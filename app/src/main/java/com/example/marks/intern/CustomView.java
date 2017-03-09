@@ -32,7 +32,7 @@ public class CustomView extends View implements View.OnTouchListener {
     Matrix matrix = new Matrix();
     Matrix matrix1= new Matrix();
     Matrix savedMatrix=new Matrix();
-    PointF start = new PointF();
+
     PointF mid = new PointF();
     private static final int NONE = 0;
     private static final int DRAG = 1;
